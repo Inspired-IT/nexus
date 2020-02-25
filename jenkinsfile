@@ -1,0 +1,35 @@
+pipeline {
+  agent any
+  tools {
+      maven 'maven'
+      }
+    stages{
+        stage('Build'){
+            steps{
+                 sh script: 'mvn clean package'
+         }
+       }
+    stage('upload war to nexus'){
+       steps{
+            nexusArtifactUploader artifacts: [
+                [
+                    artifactId: 'Inspired',
+                    classifier: '',
+                    file: 'gameoflife-web/target/gameoflife.war',
+                    type: 'war'
+               ]
+                   
+           ], 
+                   
+           credentialsId: 'Nexus',
+           groupId: 'Inspired',
+           nexusUrl: '18.191.5.215:8081/nexus',
+           nexusVersion: 'NEXUS2',
+           protocol: 'http',
+           repository: 'Inspired', 
+           version: '$BUILD_ID'
+           }
+         }
+      }
+}
+     
